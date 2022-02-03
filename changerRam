@@ -1,0 +1,42 @@
+git init
+git add ChangerRam
+
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use ieee.std_logic_unsigned.all;
+--Description
+
+--Entity
+entity changerRam is
+generic ( n: integer:=18; 
+			m:integer:=6 );
+port(clock, WR, change: in std_logic;
+		Data: in std_logic_vector(n-1 downto 0);
+		Address, Addressnew: in std_logic_vector(m-1 downto 0);
+		Q: out std_logic_vector(n-1 downto 0));
+end changerRam;
+
+--Architecture
+architecture comp of changerRam is
+type ram_type is array (23 downto 0) of std_logic_vector (17 downto 0);
+signal memram: ram_type;
+--signal temp: std_logic_vector(7 downto 0);
+begin
+--Process #1:
+process(clock)
+--Sequential programming
+begin
+	if (clock'event and clock='1') then
+		if WR='1' and change='0' then --write
+			memram(conv_integer(address)) <= Data;
+		elsif change='1' and WR='0'then --change
+		   memram(conv_integer(address)) <= memram(conv_integer(addressnew));
+			memram(conv_integer(addressnew)) <= memram(conv_integer(address)) ;
+		else
+			Q <= memram(conv_integer(address));
+		end if;
+	end if;
+end process;
+--Process #n...
+end comp;
